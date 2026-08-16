@@ -1,0 +1,108 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  groupMemberships GroupMember[]
+  paidExpenses     ExpenseEvent[]
+
+  @@map("users")
+}
+
+model Group {
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  members            GroupMember[]
+  expenseEvents      ExpenseEvent[]
+  reconciliationLogs ReconciliationLog[]
+  settlements        Settlement[]
+
+  @@map("groups")
+}
+
+model GroupMember {
+  id      String @id @default(uuid())
+  userId  String
+  groupId String
+  role    String @default("member")
+
+  user  User  @relation(fields: [userId], references: [id])
+  group Group @relation(fields: [groupId], references: [id])
+
+  @@unique([userId, groupId])
+  @@map("group_members")
+}
+
+model ExpenseEvent {
+  id          String   @id @default(uuid())
+  eventId     String   @unique
+  expenseId   String
+  amount      Decimal  @db.Decimal(12, 2)
+  description String
+  payerId     String
+  groupId     String
+  source      String
+  timestamp   DateTime
+  status      String   @default("pending")
+  createdAt   DateTime @default(now())
+
+  payer User  @relation(fields: [payerId], references: [id])
+  group Group @relation(fields: [groupId], references: [id])
+
+  reconciliationLogs ReconciliationLog[]
+
+  @@index([expenseId, groupId])
+  @@index([groupId, status])
+  @@index([timestamp])
+  @@map("expense_events")
+}
+
+model ReconciliationLog {
+  id             String   @id @default(uuid())
+  eventId        String
+  expenseId      String
+  groupId        String
+  decision       String
+  resolvedAmount Decimal? @db.Decimal(12, 2)
+  source         String
+  timestamp      DateTime
+  reason         String
+  createdAt      DateTime @default(now())
+
+  event ExpenseEvent @relation(fields: [eventId], references: [eventId])
+  group Group       @relation(fields: [groupId], references: [id])
+
+  @@index([groupId])
+  @@index([expenseId])
+  @@map("reconciliation_logs")
+}
+
+model Settlement {
+  id        String   @id @default(uuid())
+  groupId   String
+  fromId    String
+  toId      String
+  amount    Decimal  @db.Decimal(12, 2)
+  version   Int
+  createdAt DateTime @default(now())
+
+  group Group @relation(fields: [groupId], references: [id])
+
+  @@index([groupId, version])
+  @@map("settlements")
+}

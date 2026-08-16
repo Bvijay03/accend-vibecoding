@@ -1,0 +1,55 @@
+{
+  "description": "Fixture 3: Source Conflicts — Same expense submitted from different sources with different amounts. Mobile should win over web, web over sync.",
+  "events": [
+    {
+      "eventId": "evt-src-001",
+      "expenseId": "exp-conflict-001",
+      "amount": 55.00,
+      "description": "Taxi to Hotel",
+      "payerId": "{{USER_A}}",
+      "timestamp": "2024-03-15T15:00:00.000Z",
+      "source": "web",
+      "groupId": "{{GROUP_1}}"
+    },
+    {
+      "eventId": "evt-src-002",
+      "expenseId": "exp-conflict-001",
+      "amount": 52.50,
+      "description": "Taxi to Hotel",
+      "payerId": "{{USER_A}}",
+      "timestamp": "2024-03-15T15:00:00.000Z",
+      "source": "mobile",
+      "groupId": "{{GROUP_1}}"
+    },
+    {
+      "eventId": "evt-src-003",
+      "expenseId": "exp-conflict-002",
+      "amount": 80.00,
+      "description": "Museum Tickets",
+      "payerId": "{{USER_B}}",
+      "timestamp": "2024-03-15T11:00:00.000Z",
+      "source": "sync",
+      "groupId": "{{GROUP_1}}"
+    },
+    {
+      "eventId": "evt-src-004",
+      "expenseId": "exp-conflict-002",
+      "amount": 85.00,
+      "description": "Museum Tickets",
+      "payerId": "{{USER_B}}",
+      "timestamp": "2024-03-15T11:00:00.000Z",
+      "source": "web",
+      "groupId": "{{GROUP_1}}"
+    }
+  ],
+  "expectedBehavior": {
+    "accepted": [
+      { "eventId": "evt-src-002", "reason": "mobile > web for exp-conflict-001" },
+      { "eventId": "evt-src-004", "reason": "web > sync for exp-conflict-002" }
+    ],
+    "rejected": [
+      { "eventId": "evt-src-001", "reason": "web < mobile" },
+      { "eventId": "evt-src-003", "reason": "sync < web" }
+    ]
+  }
+}

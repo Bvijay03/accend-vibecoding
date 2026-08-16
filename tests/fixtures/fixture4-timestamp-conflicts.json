@@ -1,0 +1,55 @@
+{
+  "description": "Fixture 4: Timestamp and Amount Tiebreakers — Same expense, same source, resolved by timestamp and then amount.",
+  "events": [
+    {
+      "eventId": "evt-ts-001",
+      "expenseId": "exp-tie-001",
+      "amount": 40.00,
+      "description": "Gas Station",
+      "payerId": "{{USER_A}}",
+      "timestamp": "2024-03-15T09:00:00.000Z",
+      "source": "mobile",
+      "groupId": "{{GROUP_1}}"
+    },
+    {
+      "eventId": "evt-ts-002",
+      "expenseId": "exp-tie-001",
+      "amount": 42.00,
+      "description": "Gas Station",
+      "payerId": "{{USER_A}}",
+      "timestamp": "2024-03-15T09:30:00.000Z",
+      "source": "mobile",
+      "groupId": "{{GROUP_1}}"
+    },
+    {
+      "eventId": "evt-ts-003",
+      "expenseId": "exp-tie-002",
+      "amount": 20.00,
+      "description": "Parking",
+      "payerId": "{{USER_B}}",
+      "timestamp": "2024-03-15T10:00:00.000Z",
+      "source": "web",
+      "groupId": "{{GROUP_1}}"
+    },
+    {
+      "eventId": "evt-ts-004",
+      "expenseId": "exp-tie-002",
+      "amount": 25.00,
+      "description": "Parking",
+      "payerId": "{{USER_B}}",
+      "timestamp": "2024-03-15T10:00:00.000Z",
+      "source": "web",
+      "groupId": "{{GROUP_1}}"
+    }
+  ],
+  "expectedBehavior": {
+    "accepted": [
+      { "eventId": "evt-ts-002", "reason": "Later timestamp for exp-tie-001" },
+      { "eventId": "evt-ts-004", "reason": "Higher amount (same timestamp) for exp-tie-002" }
+    ],
+    "rejected": [
+      { "eventId": "evt-ts-001", "reason": "Earlier timestamp" },
+      { "eventId": "evt-ts-003", "reason": "Lower amount" }
+    ]
+  }
+}

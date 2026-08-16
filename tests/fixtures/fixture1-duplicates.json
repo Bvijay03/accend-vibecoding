@@ -1,0 +1,40 @@
+{
+  "description": "Fixture 1: Duplicate Events — Same eventId submitted twice. Second submission should be suppressed.",
+  "events": [
+    {
+      "eventId": "evt-dup-001",
+      "expenseId": "exp-001",
+      "amount": 45.00,
+      "description": "Lunch at Cafe Blue",
+      "payerId": "{{USER_A}}",
+      "timestamp": "2024-03-15T12:30:00.000Z",
+      "source": "mobile",
+      "groupId": "{{GROUP_1}}"
+    },
+    {
+      "eventId": "evt-dup-001",
+      "expenseId": "exp-001",
+      "amount": 45.00,
+      "description": "Lunch at Cafe Blue",
+      "payerId": "{{USER_A}}",
+      "timestamp": "2024-03-15T12:30:00.000Z",
+      "source": "mobile",
+      "groupId": "{{GROUP_1}}"
+    },
+    {
+      "eventId": "evt-dup-002",
+      "expenseId": "exp-002",
+      "amount": 30.00,
+      "description": "Groceries",
+      "payerId": "{{USER_B}}",
+      "timestamp": "2024-03-15T14:00:00.000Z",
+      "source": "web",
+      "groupId": "{{GROUP_1}}"
+    }
+  ],
+  "expectedBehavior": {
+    "totalUniqueEvents": 2,
+    "duplicatesRejected": 1,
+    "acceptedExpenses": ["exp-001", "exp-002"]
+  }
+}
